@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %-5level %logger{30} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- CI (once wired up) can upload this whole directory as a build
+         artifact - the thing to attach when a run fails and the console
+         scrollback is gone. -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>target/logs/sms-admin-ui-tests.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>target/logs/sms-admin-ui-tests.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>20MB</maxFileSize>
+            <maxHistory>10</maxHistory>
+            <totalSizeCap>200MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Override without editing this file:
+           mvn test -Dsmsadminui.log.level=DEBUG -Dsmsadminui.http.log.level=DEBUG -->
+    <logger name="smsadminui" level="${smsadminui.log.level:-INFO}" />
+    <logger name="smsadminui.http" level="${smsadminui.http.log.level:-INFO}" />
+
+    <logger name="io.restassured" level="WARN" />
+    <logger name="org.apache.http" level="WARN" />
+    <!-- Selenium Manager / remote driver chatter - noisy at INFO, rarely useful. -->
+    <logger name="org.openqa.selenium" level="WARN" />
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>
