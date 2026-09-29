@@ -2,8 +2,6 @@ package smsadminui.utils;
 
 import java.util.Map;
 
-/** Mirrors bulksms-api's app/admin/roles.py (and sms-admin-ui's src/types/index.ts ROLES)
- * role ids - a fixed, seeded reference table, kept in sync by hand. */
 public final class AdminRoles {
 
     private AdminRoles() {

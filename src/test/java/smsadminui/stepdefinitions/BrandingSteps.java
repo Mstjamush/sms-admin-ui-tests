@@ -14,7 +14,6 @@ import smsadminui.utils.WebDriverFactory;
 
 import java.time.Duration;
 
-/** The Jambopro brand: name, logo, page titles, brand colours and icons. */
 public class BrandingSteps {
 
     private WebDriver driver() {
@@ -65,7 +64,6 @@ public class BrandingSteps {
         waitUpTo(10).until(ExpectedConditions.elementToBeClickable(By.cssSelector(".sidebar a.brand"))).click();
     }
 
-    /** Fetched by the browser, as a visitor's browser fetches the icons. */
     @Then("{string} should be served as {string}")
     @SuppressWarnings("unchecked")
     public void shouldBeServedAs(String path, String contentType) {

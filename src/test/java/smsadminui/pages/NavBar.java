@@ -3,7 +3,6 @@ package smsadminui.pages;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-/** The authenticated app shell's top bar (App.vue) - present on every page once logged in. */
 public class NavBar extends BasePage {
 
     private static final By CLIENTS_LINK = By.xpath("//nav//a[text()='Clients']");

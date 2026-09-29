@@ -5,11 +5,6 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import smsadminui.config.Config;
 
-/**
- * Thin REST client for bulksms-api's admin API - used only for fixture setup
- * (AdminFixtures), not for the UI itself. sms-admin-ui's own axios client
- * (src/api/client.ts) is what the browser under test actually talks to.
- */
 public final class AdminApiClient {
 
     static {

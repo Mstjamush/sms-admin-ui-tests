@@ -8,13 +8,6 @@ import smsadminui.config.Config;
 
 import java.time.Duration;
 
-/**
- * One Chrome instance per test thread (Selenium Manager - built into
- * Selenium 4.6+ - resolves a matching chromedriver automatically, no
- * separate driver-management dependency needed). Headless by default
- * (browser.headless in testrail.properties); set it to false while writing
- * or debugging a scenario to watch it run.
- */
 public final class WebDriverFactory {
 
     private static final Logger LOG = Logger.getLogger(WebDriverFactory.class);

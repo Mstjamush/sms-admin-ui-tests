@@ -20,8 +20,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/** Broadcast lists, the Bulk Messages upload flow (three file shapes), the
- * campaign wizard/report and templates. */
 public class MessagingSteps {
 
     private WebDriver driver() {

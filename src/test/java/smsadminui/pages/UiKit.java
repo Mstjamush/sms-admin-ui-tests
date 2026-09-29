@@ -7,11 +7,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
-/**
- * Locators for the shared UI building blocks (ModalDialog, ToastHost,
- * StatTile, buttons by visible text) so feature page objects don't each
- * re-derive them.
- */
 public class UiKit extends BasePage {
 
     private static final By MODAL = By.cssSelector("[role=dialog]");
@@ -64,7 +59,6 @@ public class UiKit extends BasePage {
         return find(TOAST_SUCCESS).getText();
     }
 
-    /** A StatTile's value, by its label. */
     public String tileValue(String label) {
         return find(By.xpath("//div[contains(@class,'tile')][div[@class='label' and normalize-space(.)=" + literal(label)
                 + "]]/div[@class='value']")).getText();

@@ -28,7 +28,6 @@ public class ClientsPage extends BasePage {
         find(NEW_CLIENT_FORM);
     }
 
-    /** Same toggle button acts as Cancel while the form is open. */
     public void closeNewClientForm() {
         click(NEW_CLIENT_TOGGLE);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(NEW_CLIENT_FORM));
@@ -43,8 +42,6 @@ public class ClientsPage extends BasePage {
         click(CREATE_CLIENT_SUBMIT);
     }
 
-    /** A native `required`-blocked submit never reaches Vue's handler, so the
-     * form simply stays open - the clearest signal available without a server round trip. */
     public boolean isNewClientFormOpen() {
         return isPresent(NEW_CLIENT_FORM);
     }

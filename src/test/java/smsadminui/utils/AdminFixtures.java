@@ -6,13 +6,6 @@ import smsadminui.config.Config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-/**
- * Test-data setup for UI scenarios, done directly against bulksms-api's
- * admin API rather than by driving the browser through screens that aren't
- * what the scenario is actually testing. A "senders" scenario shouldn't have
- * to first click through client creation just to get a Client Administrator
- * to log in as - that's what ClientsView.feature already covers.
- */
 public final class AdminFixtures {
 
     private AdminFixtures() {
@@ -68,7 +61,6 @@ public final class AdminFixtures {
         return new ProvisionedClient(resp.jsonPath().getInt("client_id"), name, email);
     }
 
-    /** clientId is only honoured when the caller is the super admin. */
     public static ProvisionedUser createUser(Integer clientId, int roleId) {
         String suffix = RandomData.uniqueSuffix();
         String email = "qa.user." + suffix + "@example.com";
@@ -89,9 +81,6 @@ public final class AdminFixtures {
         return new ProvisionedUser(resp.jsonPath().getInt("user_id"), email, password);
     }
 
-    /** Provisions a fresh client and a Client Administrator for it - the
-     * combination most UI scenarios below the Clients screen need as a
-     * starting point (log in as this user through the UI to test as one). */
     public static ProvisionedClientAdmin provisionClientAdministrator() {
         loginAsSuperAdmin();
         ProvisionedClient client = createClient();
@@ -102,7 +91,6 @@ public final class AdminFixtures {
         return new ProvisionedClientAdmin(client, admin);
     }
 
-    /** Caller must already be authenticated as the super admin. */
     public static void topUp(int clientId, String amountKes) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("amount", amountKes);
@@ -114,7 +102,6 @@ public final class AdminFixtures {
         }
     }
 
-    /** Uploads a broadcast list as the given client administrator; returns its id. */
     public static int provisionListFor(ProvisionedUser clientAdmin, String name, String testdataFile) {
         login(clientAdmin.email(), clientAdmin.password());
         Response resp = AdminApiClient.baseSpec().header("Authorization", "Bearer " + AdminApiClient.token())
@@ -127,7 +114,6 @@ public final class AdminFixtures {
         return resp.jsonPath().getInt("list.id");
     }
 
-    /** A pending bundle request from the given client administrator. */
     public static void requestBundleAs(ProvisionedUser clientAdmin, String amountKes) {
         login(clientAdmin.email(), clientAdmin.password());
         Map<String, Object> body = new LinkedHashMap<>();
@@ -139,9 +125,6 @@ public final class AdminFixtures {
         }
     }
 
-    /** Creates a sender owned by the given client administrator - switches
-     * AdminApiClient's session to that user first, since sender ownership is
-     * pinned to whoever's authenticated when it's created. */
     public static String provisionSenderFor(ProvisionedUser clientAdmin, String shortCode) {
         login(clientAdmin.email(), clientAdmin.password());
 

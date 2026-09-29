@@ -15,12 +15,6 @@ import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
-/**
- * File pickers accept every spreadsheet format, and every Export menu offers
- * (and downloads) them all. A download is captured in the page - the export
- * is fetched through the app exactly as for a user, but the blob is inspected
- * instead of saved, so no browser download directory is needed.
- */
 public class FileFormatSteps {
 
     static final String ALL_FORMATS = "csv, xlsx, xlsm, xlsb, xls, ods, numbers";

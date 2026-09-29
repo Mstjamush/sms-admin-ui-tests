@@ -12,14 +12,6 @@ import smsadminui.config.Config;
 import java.time.Duration;
 import java.util.List;
 
-/**
- * Shared waits/locators for every page object. sms-admin-ui has no
- * data-testid attributes, but every form consistently follows
- * `&lt;label&gt;Field name &lt;input/&gt;&lt;/label&gt;` (see fieldByLabel) and every admin
- * screen wraps content in `.page` with an inline `p.error` for API failures
- * and a `table.card` for its list - both captured here once instead of
- * per page.
- */
 public abstract class BasePage {
 
     private static final By PAGE_ERROR = By.cssSelector(".page > p.error");
@@ -59,7 +51,6 @@ public abstract class BasePage {
         return !driver.findElements(locator).isEmpty();
     }
 
-    /** The input/select/textarea that's a direct child of a &lt;label&gt; containing this text. */
     protected By fieldByLabel(String labelText) {
         return By.xpath(String.format(
                 "//label[contains(normalize-space(.), %s)]/*[self::input or self::select or self::textarea]",
@@ -70,15 +61,6 @@ public abstract class BasePage {
         return findAll(TABLE_ROWS);
     }
 
-    /**
-     * Waits for a table row containing this text to appear, tolerating
-     * StaleElementReferenceException along the way. A one-shot
-     * tableRows().stream().anyMatch(...) races Vue's re-render after the
-     * list's async reload (POST completes -> load() re-fetches -> DOM
-     * replaced) - checking too early misses a row that hasn't landed yet,
-     * and checking mid-re-render can throw stale-element on elements the
-     * previous render already replaced. This absorbs both.
-     */
     protected boolean waitForTableRowContaining(String text) {
         try {
             return wait.until(driver -> {
@@ -93,9 +75,6 @@ public abstract class BasePage {
         }
     }
 
-    /** The negative-assertion counterpart - waits out the same settling window,
-     * then confirms the row never appeared, rather than racing a single
-     * instant check against ongoing re-renders. */
     protected boolean tableNeverGetsRowContaining(String text, Duration settleTime) {
         long deadline = System.currentTimeMillis() + settleTime.toMillis();
         while (System.currentTimeMillis() < deadline) {
@@ -124,7 +103,6 @@ public abstract class BasePage {
         wait.until(ExpectedConditions.urlContains(fragment));
     }
 
-    /** Safe XPath string literal even when the value itself contains a single quote. */
     private static String xpathLiteral(String value) {
         if (!value.contains("'")) return "'" + value + "'";
         if (!value.contains("\"")) return "\"" + value + "\"";

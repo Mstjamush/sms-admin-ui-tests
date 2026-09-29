@@ -3,7 +3,6 @@ package smsadminui.stepdefinitions;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Scenario-scoped values shared across step classes; cleared before each scenario. */
 public final class ScenarioData {
 
     private static final ThreadLocal<Map<String, Object>> DATA = ThreadLocal.withInitial(HashMap::new);

@@ -17,8 +17,6 @@ public class BulkCampaignsSteps {
         return new BulkCampaignsPage(WebDriverFactory.getDriver());
     }
 
-    /** Creates the sender via the admin API directly (not the UI) - the Senders
-     * screen already has its own coverage; this scenario is about campaigns. */
     @And("a sender has been provisioned for my client")
     public void aSenderHasBeenProvisionedForMyClient() {
         String shortCode = "QAUI" + RandomData.uniqueSuffix();

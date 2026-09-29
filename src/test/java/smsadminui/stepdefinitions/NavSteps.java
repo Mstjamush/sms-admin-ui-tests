@@ -16,9 +16,6 @@ public class NavSteps {
         return new NavBar(WebDriverFactory.getDriver());
     }
 
-    /** Provisions a fresh client + Client Administrator via the admin API (see
-     * AdminFixtures), then logs in as that user through the real UI login form -
-     * the shared starting point for every scenario below the Clients screen. */
     @Given("I am logged in as a newly provisioned client administrator")
     public void iAmLoggedInAsANewlyProvisionedClientAdministrator() {
         AdminFixtures.ProvisionedClientAdmin admin = AdminFixtures.provisionClientAdministrator();
@@ -66,16 +63,11 @@ public class NavSteps {
         nav.waitForUrlToContain("/login");
     }
 
-    /** Deliberately doesn't wait for the dashboard heading - when logged out
-     * this navigates but the router guard redirects to /login before the
-     * dashboard ever renders, so a wait for .page h1 would just time out. */
     @When("I visit the dashboard directly")
     public void iVisitTheDashboardDirectly() {
         WebDriverFactory.getDriver().get(Config.get("ui.base.url") + "/dashboard");
     }
 
-    /** Same reasoning as "visit the dashboard directly" - no wait for the
-     * target page's own content, since a route guard may intercept first. */
     @When("I visit the Clients page directly by URL")
     public void iVisitTheClientsPageDirectlyByUrl() {
         WebDriverFactory.getDriver().get(Config.get("ui.base.url") + "/clients");

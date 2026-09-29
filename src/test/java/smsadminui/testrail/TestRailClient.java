@@ -14,13 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Thin wrapper over the TestRail v2 REST API (https://support.testrail.com/hc/en-us/sections/7076530574868-API-Reference).
- * Covers exactly what this suite's pipeline needs: read a project/suite's
- * case list, open a run against a chosen set of cases, post one result per
- * case, and (unlike bulksms-api-tests' API-only client) attach a failure
- * screenshot to that result - far more useful for a UI failure than an API one.
- */
 public class TestRailClient {
 
     private static final Logger LOG = Logger.getLogger(TestRailClient.class);
@@ -44,7 +37,6 @@ public class TestRailClient {
                 .contentType(ContentType.JSON);
     }
 
-    /** Reads every case in the given project (and suite, for multi-suite-mode projects), paging through results. */
     @SuppressWarnings("unchecked")
     public List<TestRailCase> getCases(int projectId, Integer suiteId) {
         LOG.infof("Reading cases from TestRail (project %d%s)", projectId, suiteId != null ? ", suite " + suiteId : "");
@@ -78,7 +70,6 @@ public class TestRailClient {
         return all;
     }
 
-    /** Creates a new run containing exactly the given cases; returns its run id. */
     public int addRun(int projectId, Integer suiteId, String name, List<Integer> caseIds) {
         StringBuilder body = new StringBuilder("{");
         body.append("\"name\":\"").append(JsonUtil.escape(name)).append("\",");
@@ -100,8 +91,6 @@ public class TestRailClient {
         return runId;
     }
 
-    /** statusId: 1 = Passed, 2 = Blocked, 4 = Retest, 5 = Failed (TestRail's default status ids).
-     * Returns the created result's id (needed for addAttachmentToResult), or -1 if the post failed. */
     public int addResultForCase(int runId, int caseId, int statusId, String comment, long elapsedSeconds) {
         String body = "{\"status_id\":" + statusId
                 + ",\"comment\":\"" + JsonUtil.escape(comment) + "\""
@@ -118,7 +107,6 @@ public class TestRailClient {
         return -1;
     }
 
-    /** Attaches a file (e.g. a failure screenshot) to a result created by addResultForCase. */
     public void addAttachmentToResult(int resultId, File file) {
         if (resultId < 0) return;
 

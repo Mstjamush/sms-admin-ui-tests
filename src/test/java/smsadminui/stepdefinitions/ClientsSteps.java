@@ -49,11 +49,6 @@ public class ClientsSteps {
         page.submitNewClientForm();
     }
 
-    /** .test is a syntactically-valid-enough TLD for the browser's native
-     * type=email check to accept, but bulksms-api's email-validator rejects it
-     * as a reserved TLD (RFC 2606) - see ClientCreateRequest.client_email -
-     * so this exercises the backend's own validation via the UI, not just the
-     * browser's client-side format check (already covered by the empty-name test). */
     @When("I try to create a new client with an email the backend will reject")
     public void iTryToCreateANewClientWithAnEmailTheBackendWillReject() {
         String suffix = RandomData.uniqueSuffix();

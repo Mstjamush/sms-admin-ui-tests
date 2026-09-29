@@ -30,21 +30,14 @@ public class LoginPage extends BasePage {
         click(SUBMIT);
     }
 
-    /** Clicks submit with both fields left blank - native `required` validation
-     * should block the form from ever reaching Vue's submit handler. */
     public void submitEmpty() {
         click(SUBMIT);
     }
 
-    /** Waits up to the full timeout for the (async) login failure to render - use
-     * after an attempt expected to fail. */
     public boolean hasError() {
         return hasErrorWithin(Duration.ofSeconds(10));
     }
 
-    /** Short wait for asserting an error's *absence* after an action that never
-     * calls the API at all (e.g. a blocked empty-field submit) - avoids paying
-     * the full 10s timeout for a negative check with nothing to wait for. */
     public boolean hasErrorQuickCheck() {
         return hasErrorWithin(Duration.ofSeconds(2));
     }

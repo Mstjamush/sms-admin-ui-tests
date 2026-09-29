@@ -3,11 +3,6 @@ package smsadminui.utils;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Hand-rolled JSON building for the admin-API fixture calls this suite makes
- * - deliberately dependency-free. Values are type-aware: String -> quoted,
- * Number/Boolean -> raw literal, List -> JSON array, null -> null.
- */
 public final class JsonUtil {
 
     private JsonUtil() {

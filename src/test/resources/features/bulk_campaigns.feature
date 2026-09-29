@@ -6,9 +6,6 @@ Feature: Bulk campaigns (Client Administrator, scoped to their own client)
     When I open the Bulk Messages page
     Then I should be prompted to create a sender first
 
-  # Creating a campaign queues a real outbound_messages row + sms.outbound
-  # publish per recipient (see bulksms-api's create_bulk_campaign), so this
-  # needs RabbitMQ reachable the same way single-SMS sending does.
   @C4051 @requires-rabbitmq
   Scenario: A client administrator sends a bulk campaign against their own sender
     Given I am logged in as a newly provisioned client administrator

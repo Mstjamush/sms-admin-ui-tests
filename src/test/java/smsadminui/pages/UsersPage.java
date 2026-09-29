@@ -24,8 +24,6 @@ public class UsersPage extends BasePage {
         find(By.cssSelector(".page h1"));
         return this;
     }
-
-    /** UsersView.vue only renders this button for non-Super-Admin sessions (v-if="!auth.isSuperAdmin"). */
     public boolean hasNewUserButton() {
         return isPresent(NEW_USER_TOGGLE);
     }
@@ -60,8 +58,6 @@ public class UsersPage extends BasePage {
         return waitForTableRowContaining(email);
     }
 
-    /** For isolation checks: waits out a settling window rather than racing
-     * the list's async reload with a single instant check. */
     public boolean neverShowsUserRow(String email) {
         return tableNeverGetsRowContaining(email, Duration.ofSeconds(3));
     }

@@ -12,26 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * The end-to-end TestRail pipeline requested for this suite:
- *   1. READ  - pulls the case list for testrail.project_id (+ testrail.suite_id)
- *              from TestRail (TestRailClient.getCases already logs this step).
- *   2. RUN   - opens a fresh TestRail run containing exactly those cases, then
- *              runs only the Cucumber scenarios tagged @C<id> for a case in
- *              that list (via TestRunner, so it's the exact same suite
- *              "mvn test" runs - just filtered and pointed at this run).
- *   3. UPDATE - each scenario reports its own result (with a screenshot on
- *              failure) as it finishes (TestRailHooks), against the run
- *              created in step 2.
- *
- * A scenario's @C<id> tag only matters if that id is an actual case in your
- * TestRail project/suite - see the README for how to align feature file tags
- * with real case ids.
- *
- * Usage:
- *   mvn test-compile exec:java -Dexec.mainClass=smsadminui.testrail.TestRailDrivenRunner
- *   mvn test-compile exec:java -Dexec.mainClass=smsadminui.testrail.TestRailDrivenRunner -Dexec.args="--dry-run"
- */
 public class TestRailDrivenRunner {
 
     private static final Logger LOG = Logger.getLogger(TestRailDrivenRunner.class);

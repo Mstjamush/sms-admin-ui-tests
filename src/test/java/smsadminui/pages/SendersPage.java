@@ -28,7 +28,6 @@ public class SendersPage extends BasePage {
         find(NEW_SENDER_FORM);
     }
 
-    /** Same toggle button acts as Cancel while the form is open. */
     public void closeNewSenderForm() {
         click(NEW_SENDER_TOGGLE);
         wait.until(ExpectedConditions.invisibilityOfElementLocated(NEW_SENDER_FORM));
@@ -50,8 +49,6 @@ public class SendersPage extends BasePage {
         return waitForTableRowContaining(shortCode);
     }
 
-    /** For isolation checks: waits out a settling window rather than racing
-     * the list's async reload with a single instant check. */
     public boolean neverShowsSenderRow(String shortCode) {
         return tableNeverGetsRowContaining(shortCode, Duration.ofSeconds(3));
     }

@@ -4,13 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-/**
- * Reads testrail.properties, with environment variables (then -D system
- * properties) taking precedence over it - "testrail.api_key" is overridden
- * by env var TESTRAIL_API_KEY, "admin.super_admin.password" by
- * ADMIN_SUPER_ADMIN_PASSWORD, and so on (dots -> underscores, upper-cased).
- * Mirrors bulksms-api-tests' Config.java so both projects behave the same way in CI.
- */
 public class Config {
     private static final Properties props = new Properties();
 

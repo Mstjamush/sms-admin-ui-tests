@@ -7,12 +7,6 @@ import io.restassured.specification.FilterableRequestSpecification;
 import io.restassured.specification.FilterableResponseSpecification;
 import org.jboss.logging.Logger;
 
-/**
- * Logs every RestAssured request/response - registered once globally (see
- * HttpLogging.install()) so neither AdminApiClient nor TestRailClient has to
- * opt in individually. One INFO line per call (method, URI, status,
- * duration); bodies only at DEBUG.
- */
 public class ApiLoggingFilter implements Filter {
 
     private static final Logger LOG = Logger.getLogger("smsadminui.http");

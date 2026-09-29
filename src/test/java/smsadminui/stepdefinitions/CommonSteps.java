@@ -10,8 +10,6 @@ import smsadminui.utils.WebDriverFactory;
 
 import java.time.Duration;
 
-/** Assertions shared across every admin screen (Clients/Senders/Users/Bulk Campaigns),
- * which all follow the same `.page` wrapper markup - see BasePage. */
 public class CommonSteps {
 
     private static final By PAGE_ERROR = By.cssSelector(".page > p.error");
@@ -22,8 +20,6 @@ public class CommonSteps {
         Assert.assertFalse("Expected no error message on the page", present);
     }
 
-    /** Waits for the (async) API failure to render, rather than racing it -
-     * a plain instant check would be flaky here. */
     @Then("there should be a page error")
     public void thereShouldBeAPageError() {
         try {
@@ -34,11 +30,6 @@ public class CommonSteps {
         }
     }
 
-    /** Waits rather than checking instantly - sms-admin-ui's routes are
-     * lazy-loaded (`component: () => import(...)`), so back-to-back
-     * client-side navigations (no full page reload) can have a brief gap
-     * before the URL actually updates, especially the first time a given
-     * route's chunk loads in a session. An instant check races that. */
     @Then("the page URL should contain {string}")
     public void thePageUrlShouldContain(String fragment) {
         try {

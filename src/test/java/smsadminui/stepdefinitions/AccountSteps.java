@@ -16,7 +16,6 @@ import smsadminui.utils.WebDriverFactory;
 
 import java.time.Duration;
 
-/** Credits (client), Billing (super admin), Reports and API access. */
 public class AccountSteps {
 
     private WebDriver driver() {

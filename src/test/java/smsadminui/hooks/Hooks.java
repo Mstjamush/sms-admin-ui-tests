@@ -17,16 +17,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-/**
- * Drives the WebDriver lifecycle (one Chrome instance per scenario), embeds
- * a screenshot in the Cucumber report on failure, and reports every
- * @C<id>-tagged scenario's outcome (with that screenshot attached) to
- * TestRail. Used by both entry points:
- *  - "mvn test": reports against the fixed testrail.run_id from testrail.properties.
- *  - TestRailDrivenRunner: reports against the run it just created, passed
- *    via the "testrail.run.id" system property (takes precedence).
- * Scenarios with no @C<id> tag are silently skipped.
- */
 public class Hooks {
 
     private static final Logger LOG = Logger.getLogger(Hooks.class);
