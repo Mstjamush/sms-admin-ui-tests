@@ -1,8 +1,6 @@
 # sms-admin-ui – Selenium BDD Tests
 
-Automated UI test suite for [`sms-admin-ui`](../../Personal_Co_code/sms-admin-ui) (the Vue 3 admin console for `bulksms-api`'s admin API), built with **Selenium 4**, **Cucumber 7**, and **JUnit 4** — same TestRail integration pattern as [`bulksms-api-tests`](../bulksms-api-tests) in this folder, adapted from REST Assured to a real browser.
-
-It drives Chrome against a running `sms-admin-ui` + `bulksms-api`, covering login, role-based navigation, and the Clients/Senders/Users/Bulk Campaigns screens, positive and negative. Client Administrator-scoped scenarios provision their client/user fixtures directly against `bulksms-api`'s admin API first (see [`AdminFixtures`](src/test/java/smsadminui/utils/AdminFixtures.java)) rather than re-driving the Clients screen every time — that screen already has its own coverage, so other scenarios start from realistic state instead of re-testing an unrelated prerequisite through the slow UI path.
+Automated UI test suite for [`sms-admin-ui`](https://github.com/Mstjamush/sms-admin-ui) 
 
 Two ways to run it against **TestRail**:
 1. **`mvn test`** — runs everything, and reports each `@C<id>`-tagged scenario's result (with a screenshot attached on failure) to a TestRail run you created manually.
