@@ -35,6 +35,24 @@ public class UiKit extends BasePage {
         el.sendKeys(text);
     }
 
+    /** Picks an option of a select inside the open dialog, by the label around it and the option's visible text. */
+    public void selectInModal(String label, String optionText) {
+        WebElement el = find(By.xpath("//*[@role='dialog']//label[contains(normalize-space(.), " + literal(label) + ")]//select"));
+        new org.openqa.selenium.support.ui.Select(el).selectByVisibleText(optionText);
+    }
+
+    public boolean modalButtonEnabled(String text) {
+        return find(By.xpath("//*[@role='dialog']//button[normalize-space(.)=" + literal(text) + "]")).isEnabled();
+    }
+
+    public boolean modalButtonPresent(String text) {
+        return isPresent(By.xpath("//*[@role='dialog']//button[normalize-space(.)=" + literal(text) + "]"));
+    }
+
+    public String modalText() {
+        return find(MODAL).getText();
+    }
+
     public void chooseFile(String absolutePath) {
         driver.findElement(By.cssSelector("input[type=file]")).sendKeys(absolutePath);
     }

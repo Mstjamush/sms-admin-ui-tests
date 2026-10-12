@@ -19,7 +19,8 @@ Feature: Login
     Given I am on the login page
     When I submit the login form with both fields empty
     Then I should still be on the login page
-    And I should not see a login error
+    And I should see a login error
+    And the login error should say "Enter your email and your password"
 
   @C4004
   Scenario: Logging in with an email that has no account shows an error
@@ -29,11 +30,12 @@ Feature: Login
     And I should still be on the login page
 
   @C4005
-  Scenario: The login form blocks a malformed email address natively
+  Scenario: The login form asks for a well-formed email address before it calls the API
     Given I am on the login page
     When I log in with email "not-an-email" and password "whatever-password"
     Then I should still be on the login page
-    And I should not see a login error
+    And I should see a login error
+    And the login error should say "Enter your email address"
 
   @C4006
   Scenario: A Client Administrator logs in and sees their own client on the dashboard

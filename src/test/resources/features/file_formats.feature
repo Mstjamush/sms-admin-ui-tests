@@ -62,8 +62,8 @@ Feature: Spreadsheet formats - upload any of seven, export in any of seven
     Then a file ending "daily-report-30d.numbers" should have been downloaded
 
   @C4163
-  Scenario: The statement exports as .ods from the Credits page
-    When I open the "/credits" page
+  Scenario: The statement exports as .ods from the Billing page
+    When I open the "/billing" page
     And I open the "Export" export menu
     And I export as "ods"
     Then a file ending ".ods" should have been downloaded

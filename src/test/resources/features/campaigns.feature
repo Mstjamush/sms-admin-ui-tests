@@ -10,7 +10,7 @@ Feature: Campaign builder - schedule, send, report, cancel
     When I start a campaign to that list with message "Hi {{name}}, KES {{amount|0}} is due"
     Then the wizard preview should show "Hi Wanjiku, KES 1500 is due"
     When I schedule it for tomorrow and confirm
-    Then the review step should have shown an estimated cost of "KES 3.00"
+    Then the review step should have shown an estimated cost of "3 tokens"
     And the campaign report should show the status "Scheduled"
 
   @C4121

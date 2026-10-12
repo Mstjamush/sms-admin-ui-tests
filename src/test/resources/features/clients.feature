@@ -46,3 +46,19 @@ Feature: Clients (Super Administrator only)
     Then the client I just created should appear in the client list
     When I try to create a Client Administrator with a short password
     Then the Client Administrator form should still be open
+
+  # A client created here is active at once and has to be billable: prepaid needs a price band or its own price per token,
+  # postpaid a cost per message.
+  @C4190
+  Scenario: A postpaid client is created with its cost per message
+    When I open the Clients page
+    And I create a new postpaid client at KES "0.45" per SMS
+    Then the client I just created should appear in the client list
+    And the client I just created should be listed as "Postpaid"
+    And the client I just created should be listed as "KES 0.45"
+
+  @C4191
+  Scenario: A postpaid client can't be created until its cost per message is set
+    When I open the Clients page
+    And I start a new postpaid client with no cost per message
+    Then the Create client button should be disabled

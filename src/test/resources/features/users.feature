@@ -8,12 +8,14 @@ Feature: Users
     Then the user I just created should appear in the user list
 
   @C4041
-  Scenario: A Super Administrator does not see the "+ New user" button
+  Scenario: A Super Administrator sees the "+ New user" button, and picks the client the user is for
     Given I am on the login page
     And I log in as the configured super admin
     And I should be on the dashboard
     When I open the Users page
-    Then there should be no new-user button on the page
+    Then there should be a new-user button on the page
+    When I click the new-user button
+    Then the new user form should ask which client the user is for
 
   @C4042
   Scenario: The role dropdown for a Client Administrator does not offer the Client Administrator role

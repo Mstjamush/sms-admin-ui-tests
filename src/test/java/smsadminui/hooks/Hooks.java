@@ -3,6 +3,7 @@ package smsadminui.hooks;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.Scenario;
+import io.cucumber.java.Status;
 import org.jboss.logging.Logger;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -68,6 +69,12 @@ public class Hooks {
     private void reportToTestRail(Scenario scenario, long elapsedSeconds, File screenshotFile) {
         int caseId = extractTestRailCaseId(scenario);
         if (caseId == -1) return;
+
+        // A scenario that skipped itself (an assumption, e.g. the database isn't reachable) hasn't passed: report nothing.
+        if (scenario.getStatus() == Status.SKIPPED) {
+            LOG.warnf("TestRail: case %d was skipped - not reporting a result", caseId);
+            return;
+        }
 
         Integer runId = resolveRunId();
         if (runId == null) {

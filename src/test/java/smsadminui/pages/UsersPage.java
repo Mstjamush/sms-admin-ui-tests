@@ -28,6 +28,15 @@ public class UsersPage extends BasePage {
         return isPresent(NEW_USER_TOGGLE);
     }
 
+    public void clickNewUserButton() {
+        click(NEW_USER_TOGGLE);
+    }
+
+    /** A Super Administrator's form is for any client, so it starts with a client picker. */
+    public boolean asksWhichClient() {
+        return find(By.xpath("//form[.//h2[starts-with(normalize-space(.), 'New user')]]//label[contains(normalize-space(.), 'Which client')]")).isDisplayed();
+    }
+
     public void openNewUserForm() {
         click(NEW_USER_TOGGLE);
         find(NEW_USER_FORM);
