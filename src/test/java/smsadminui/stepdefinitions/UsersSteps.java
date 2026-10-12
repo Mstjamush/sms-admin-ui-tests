@@ -64,6 +64,21 @@ public class UsersSteps {
         Assert.assertFalse(page().hasNewUserButton());
     }
 
+    @Then("there should be a new-user button on the page")
+    public void thereShouldBeANewUserButtonOnThePage() {
+        Assert.assertTrue(page().hasNewUserButton());
+    }
+
+    @When("I click the new-user button")
+    public void iClickTheNewUserButton() {
+        page().clickNewUserButton();
+    }
+
+    @Then("the new user form should ask which client the user is for")
+    public void theNewUserFormShouldAskWhichClient() {
+        Assert.assertTrue(page().asksWhichClient());
+    }
+
     @Then("the new user form should still be open")
     public void theNewUserFormShouldStillBeOpen() {
         Assert.assertTrue(page().isNewUserFormOpen());

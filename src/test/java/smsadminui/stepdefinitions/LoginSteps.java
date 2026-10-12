@@ -57,6 +57,11 @@ public class LoginSteps {
         Assert.assertTrue("Expected a login error message", page().hasError());
     }
 
+    @Then("the login error should say {string}")
+    public void theLoginErrorShouldSay(String text) {
+        Assert.assertTrue("Login error: '" + page().errorText() + "'", page().errorText().contains(text));
+    }
+
     @Then("I should not see a login error")
     public void iShouldNotSeeALoginError() {
         Assert.assertFalse("Expected no login error message", page().hasErrorQuickCheck());

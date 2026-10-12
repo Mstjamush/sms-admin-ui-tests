@@ -64,3 +64,39 @@ Feature: Dashboard navigation, role-based guards, and logout
   Scenario: A Client Administrator does not see the Clients card on the dashboard
     Given I am logged in as a newly provisioned client administrator
     Then the dashboard should not show a Clients card
+
+  @C4186
+  Scenario: A Super Administrator's billing links are Clients, Payments, Invoices, Price bands and M-Pesa
+    Given I am on the login page
+    When I log in as the configured super admin
+    Then I should be on the dashboard
+    And the nav bar should show a "Clients" link
+    And the nav bar should show a "Payments" link
+    And the nav bar should show a "Invoices" link
+    And the nav bar should show a "Price bands" link
+    And the nav bar should show a "M-Pesa" link
+    And the nav bar should not show a "Billing" link
+    And the nav bar should not show a "Credits" link
+
+  @C4187
+  Scenario: A prepaid Client Administrator has Billing but no Invoices
+    Given I am logged in as a newly provisioned client administrator
+    Then the nav bar should show a "Billing" link
+    And the nav bar should not show a "Invoices" link
+    And the nav bar should not show a "Credits" link
+    And the nav bar should not show a "Payments" link
+    And the nav bar should not show a "Price bands" link
+    And the nav bar should not show a "M-Pesa" link
+
+  @C4188
+  Scenario: A Client Administrator is redirected away from the Super Administrator's billing pages
+    Given I am logged in as a newly provisioned client administrator
+    When I open the "/payments" page
+    Then I should be on the dashboard
+
+  @C4189
+  Scenario: The old Credits address leads to Billing
+    Given I am logged in as a newly provisioned client administrator
+    When I open the "/credits" page
+    Then the page URL should contain "/billing"
+    And the page heading should read "Billing"

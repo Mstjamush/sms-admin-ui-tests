@@ -45,87 +45,9 @@ public class AccountSteps {
         waitUpTo(10).until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector(".balance-chip"), text));
     }
 
-    @When("I request a bundle of KES {string} from the Credits page")
-    public void iRequestABundle(String amount) {
-        UiKit ui = ui();
-        ui.open("/credits");
-        ui.clickButton("Request a bundle");
-        ui.typeIntoModal("Amount (KES)", amount);
-        ui.clickModalButton("Send request");
-    }
-
-    @Then("my bundle requests should include a pending request for {string}")
-    public void myBundleRequestsShouldInclude(String amount) {
-        String row = waitUpTo(10).until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//h2[normalize-space(.)='Bundle requests']/ancestor::div[contains(@class,'card')]//tbody/tr[1]"))).getText();
-        Assert.assertTrue(row, row.contains(amount) && row.contains("Pending"));
-    }
-
-    @Given("I am logged in as the super admin with a newly provisioned client")
-    public void iAmLoggedInAsTheSuperAdminWithANewClient() {
-        AdminFixtures.ProvisionedClientAdmin admin = AdminFixtures.provisionClientAdministrator();
-        TestContext.setClientAdmin(admin);
-        LoginPage login = new LoginPage(driver()).open();
-        login.loginAs(smsadminui.config.Config.get("admin.super_admin.email"), smsadminui.config.Config.get("admin.super_admin.password"));
-        login.waitForUrlToContain("/dashboard");
-    }
-
-    @Given("that client has requested a bundle of KES {string}")
-    public void thatClientHasRequestedABundle(String amount) {
-        AdminFixtures.requestBundleAs(TestContext.clientAdmin().user(), amount);
-    }
-
-    @When("I open that client's billing")
-    public void iOpenThatClientsBilling() {
-        ui().open("/billing?client=" + TestContext.clientAdmin().client().clientId());
-        waitUpTo(10).until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//h2[normalize-space(.)='" + TestContext.clientAdmin().client().clientName() + "']")));
-    }
-
-    @When("I top up that client with KES {string}")
-    public void iTopUpThatClient(String amount) {
-        UiKit ui = ui();
-        ui.clickButton("Top up");
-        ui.typeIntoModal("Amount (KES)", amount);
-        ui.typeIntoModal("Payment reference", "QA-UI-" + RandomData.uniqueSuffix());
-        ui.clickModalButton("Confirm");
-        ui.waitForModalToClose();
-    }
-
     @Then("a success message should say {string}")
     public void aSuccessMessageShouldSay(String text) {
         waitUpTo(10).until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector(".toast.success .text"), text));
-    }
-
-    @When("I approve that client's bundle request at KES {string} per SMS")
-    public void iApproveThatClientsBundleRequest(String rate) {
-        UiKit ui = ui();
-        ui.open("/billing?tab=requests");
-        String client = TestContext.clientAdmin().client().clientName();
-        waitUpTo(10).until(ExpectedConditions.elementToBeClickable(
-                By.xpath("//tr[.//strong[normalize-space(.)='" + client + "']]//button[normalize-space(.)='Approve']"))).click();
-        ui.typeIntoModal("Negotiated rate per SMS", rate);
-        ui.clickModalButton("Approve and activate");
-    }
-
-    @When("I create a plan {string} at KES {string} per SMS with {string} SMS")
-    public void iCreateAPlan(String name, String rate, String allowance) {
-        String unique = name + " " + RandomData.uniqueSuffix();
-        ScenarioData.put("planName", unique);
-        UiKit ui = ui();
-        ui.open("/billing?tab=plans");
-        ui.clickButton("New plan");
-        ui.typeIntoModal("Name", unique);
-        ui.typeIntoModal("Rate per SMS", rate);
-        ui.typeIntoModal("SMS allowance", allowance);
-        ui.clickModalButton("Save plan");
-        ui.waitForModalToClose();
-    }
-
-    @Then("the plan should be listed")
-    public void thePlanShouldBeListed() {
-        waitUpTo(10).until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//table//strong[normalize-space(.)='" + ScenarioData.get("planName") + "']")));
     }
 
     @Then("the daily breakdown should have {int} rows")
@@ -177,5 +99,10 @@ public class AccountSteps {
     @Then("the nav bar should show a {string} link")
     public void theNavBarShouldShowALink(String label) {
         Assert.assertFalse(label, driver().findElements(By.xpath("//nav//a[normalize-space(.)='" + label + "']")).isEmpty());
+    }
+
+    @Then("the nav bar should not show a {string} link")
+    public void theNavBarShouldNotShowALink(String label) {
+        Assert.assertTrue(label, driver().findElements(By.xpath("//nav//a[normalize-space(.)='" + label + "']")).isEmpty());
     }
 }

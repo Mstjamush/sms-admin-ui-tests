@@ -16,7 +16,7 @@ Two ways to run it against **TestRail**:
 | Apache Maven | 3.8+ |
 | Google Chrome | any recent version (Selenium Manager resolves a matching chromedriver automatically) |
 | Node.js | `sms-admin-ui`'s own requirement (see its `package.json` `engines`) |
-| `bulksms-api` | running, with MySQL **and RabbitMQ** reachable (see its own README) |
+| `bulksms-api` | running with **`TWO_FACTOR_REQUIRED=false`** (the suite signs in with a password alone), MySQL **and RabbitMQ** reachable (see its own README) |
 | `sms-admin-ui` | running (`npm run dev`) |
 | TestRail account | with API access enabled |
 
@@ -34,9 +34,11 @@ docker compose up -d rabbitmq           # optional - see "Run without RabbitMQ"
 source .venv/bin/activate && pip install -r requirements.txt
 cp .env.example .env
 BOOTSTRAP_ADMIN_PASSWORD='ChangeMe123!' python seed_admin.py   # once - the Super Administrator this suite signs in as
-uvicorn app.main:app --port 8000        # the API
-python -m app.scheduler                 # scheduled campaigns (a second terminal)
+TWO_FACTOR_REQUIRED=false uvicorn app.main:app --port 8000   # the API: the suite signs in with a password alone
+python -m app.scheduler                 # scheduled campaigns and invoices (a second terminal; optional - see below)
 ```
+
+Use a disposable database (`DB_NAME=sms_qa python -m app.migrate`): the suite registers companies, creates clients and payments, and doesn't delete them. Pending registrations are listed first on the Clients page, so the suite searches for a client by name rather than reading the first page.
 
 ### 2. Start sms-admin-ui
 
@@ -67,6 +69,12 @@ admin.super_admin.email=admin@bulksms-platform.com
 admin.super_admin.password=ChangeMe123!
 
 browser.headless=true                         # false to watch it run while debugging
+
+db.host=localhost                             # the API's database, only to age postpaid usage so an invoice can be issued
+db.port=3306                                  # (DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD override these, like the API's);
+db.name=sms                                   # unreachable -> the invoice scenario skips
+db.user=root
+db.password=r00t
 ```
 
 > Don't commit real TestRail API keys if this project ends up on a shared remote. Every key above can also be set via an environment variable instead (dots → underscores, upper-cased: `testrail.api_key` → `TESTRAIL_API_KEY`) - see [`Config.java`](src/test/java/smsadminui/config/Config.java).
@@ -83,19 +91,20 @@ mvn dependency:resolve
 
 | Feature file | Cases | Covers |
 |---|---|---|
-| `login.feature`, `dashboard_nav.feature` | C4001-C4017 | login, role-based navigation and guards, logout, dashboard |
+| `login.feature`, `dashboard_nav.feature` | C4001-C4017, C4186-C4189 | login, role-based navigation and guards, logout, dashboard; **the billing navigation**: a Client Administrator has *Billing* (and *Invoices* when postpaid) and no *Credits*; a Super Administrator has *Clients*, *Payments*, *Invoices*, *Price bands* and *M-Pesa* and no *Billing*; `/credits` leads to Billing |
 | `branding.feature` | C4170-C4174 | the **Jambopro** brand: login page logo and headline, page titles ("Campaigns · Jambopro"), brand green button with navy text, Poppins loaded, sidebar logo returns to the dashboard, favicon / ICO / Apple touch icon served |
-| `clients.feature`, `users.feature`, `senders.feature` | C4020-C4046 | the original account screens |
+| `clients.feature`, `users.feature`, `senders.feature` | C4020-C4046, C4190-C4191 | the original account screens; **New client is a dialog with the billing settings** (prepaid: a band or its own price; postpaid: a cost per message, and the button stays disabled until it is set) |
 | `bulk_campaigns.feature` | C4050-C4053 | quick send to typed numbers, the upload tab |
 | `bulk_upload_formats.feature` | C4110-C4112 | uploading the three file shapes: detected format, template with placeholders and live preview (defaults for missing values), each row's own message, numbers only |
 | `broadcast_lists.feature` | C4100-C4103 | list upload, import report, **duplicates listed with reason**, import history, `.xls` |
 | `file_formats.feature` | C4104-C4107, C4113, C4160-C4163 | `.ods` / `.numbers` / `.xlsb` list uploads; every file picker accepts all seven formats; a personalised `.xlsx` detected and previewed on the Upload file tab; the **Export** menu offers all seven formats; exporting a list's numbers (`.xlsx`), the daily report (`.numbers`) and the statement (`.ods`) |
 | `campaigns.feature` | C4120-C4122 | campaign builder: preview, estimated cost, schedule, cancel from the report, send now |
 | `templates.feature` | C4130-C4131 | create, unique names |
-| `credits_billing.feature` | C4140-C4144 | Credits page and balance chip, bundle request; Super Admin top-up, bundle approval, plans |
+| `billing.feature` | C4140-C4144, C4175-C4179 | **prepaid tokens**: the Billing page and the top-bar chip, asking to buy tokens by cash / bank / cheque (a *Waiting* request), a Super Admin adding tokens from the client's page and confirming a request on Payments, price bands (add, archive); **postpaid**: the bill and cost per message, setting a user's own cost per message, the Invoices page and changing an invoice's status (the last needs the database, see below), the M-Pesa page |
+| `registration.feature` | C4180-C4185 | **public registration** on `/register`; a pending company's user can't sign in ("waiting for approval"); a Super Admin approves (a postpaid company needs a cost per message first) or rejects with a reason the user then sees at sign-in |
 | `reports_api_access.feature` | C4150-C4154 | Reports page, API credentials, navigation, the signing guide documents HMAC-SHA256 (not X-Api-Key), changing your password from the top bar |
 
-Every provisioned client starts with KES 1000 of credit (billing is enforced). Upload fixtures are in `src/test/resources/testdata/` and are attached with Selenium's `sendKeys` on the file input. The spreadsheet fixtures are copies of bulksms-api-tests' (see its `tools/make_fixtures.py`).
+Every provisioned client is prepaid on its own price of KES 1.00 a token and starts with **1000 tokens** from the Super Administrator (billing is enforced: no tokens, no sends); postpaid scenarios provision a postpaid client at KES 0.50 an SMS page. Upload fixtures are in `src/test/resources/testdata/` and are attached with Selenium's `sendKeys` on the file input. The spreadsheet fixtures are copies of bulksms-api-tests' (see its `tools/make_fixtures.py`).
 
 Export scenarios capture the download in the page: the app fetches the file exactly as it does for a user, but the step inspects the blob (name, size, type) instead of saving it, so no browser download directory is needed.
 
@@ -207,6 +216,9 @@ Scenario: Work in progress
 ## Known limitations
 
 - **`@C4051` (sending a bulk campaign) needs RabbitMQ reachable**, tagged `@requires-rabbitmq` — same constraint as `bulksms-api-tests`' single-SMS/bulk-campaign scenarios (creating a campaign queues a real send per recipient). Exclude locally without it: `mvn test -Dcucumber.filter.tags="not @ignore and not @requires-rabbitmq"`.
+- **M-Pesa isn't driven.** Buying tokens by STK push calls Safaricom (the Buy tokens dialog only offers cash / bank / cheque when the API has no `MPESA_*` set, and the suite picks that tab when it is offered). The M-Pesa page is only checked to load; the callbacks are covered by `bulksms-api-tests`.
+- **Invoices are issued through the database.** Billing periods end at midnight and no endpoint moves the clock, so the invoice scenario (`@C4178`) sends one SMS as the postpaid client, ages that usage by two days with one `UPDATE` through JDBC ([`Db`](src/test/java/smsadminui/utils/Db.java)), and calls `POST /invoices/generate`. Without a reachable database the scenario is skipped, and a skipped scenario isn't reported to TestRail as a pass.
+- **The scenario ids added for billing (C4175-C4191) are placeholders**, like the rest (see above). C4140-C4144 keep their place but now test the token model; the wallet, bundle-request and plan screens they covered are gone.
 - **No CI pipeline yet.** `bulksms-api-tests` has a GitHub Actions workflow (MySQL + RabbitMQ service containers, a live backend); this project would additionally need a Node/Vite dev server stage and a headless-Chrome-capable runner (GitHub's `ubuntu-latest` has Chrome preinstalled, so this is mostly wiring, not a blocker) - ask for it if/when wanted.
 - **Bulk campaign upload mode (file upload, as opposed to typed-in recipients) isn't covered.** Only the "Insert recipients" tab is exercised.
 - **No coverage of the Users screen's Super-Admin-side table contents** (only that the "+ New user" button is absent for that role) or of viewing another client's data as Super Admin.

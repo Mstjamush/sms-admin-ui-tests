@@ -58,6 +58,39 @@ public class ClientsSteps {
         page.submitNewClientForm();
     }
 
+    @When("I create a new postpaid client at KES {string} per SMS")
+    public void iCreateANewPostpaidClient(String rate) {
+        String suffix = RandomData.uniqueSuffix();
+        clientName = "QA UI Client " + suffix;
+
+        ClientsPage page = page();
+        page.openNewClientForm();
+        page.fillNewClientForm(clientName, "qa.ui.client." + suffix + "@example.com");
+        page.choosePostpaid();
+        page.typeCostPerMessage(rate);
+        page.submitNewClientForm();
+    }
+
+    @When("I start a new postpaid client with no cost per message")
+    public void iStartANewPostpaidClientWithNoCostPerMessage() {
+        String suffix = RandomData.uniqueSuffix();
+        ClientsPage page = page();
+        page.openNewClientForm();
+        page.fillNewClientForm("QA UI Client " + suffix, "qa.ui.client." + suffix + "@example.com");
+        page.choosePostpaid();
+    }
+
+    @Then("the Create client button should be disabled")
+    public void theCreateClientButtonShouldBeDisabled() {
+        Assert.assertFalse(page().createClientButtonEnabled());
+    }
+
+    @Then("the client I just created should be listed as {string}")
+    public void theClientIJustCreatedShouldBeListedAs(String text) {
+        String row = page().rowTextFor(clientName);
+        Assert.assertTrue("Row: " + row, row.contains(text));
+    }
+
     @When("I create a Client Administrator for the client I just created")
     public void iCreateAClientAdministratorForTheClientIJustCreated() {
         String suffix = RandomData.uniqueSuffix();
