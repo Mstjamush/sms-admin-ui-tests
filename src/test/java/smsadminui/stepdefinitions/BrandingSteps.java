@@ -9,6 +9,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import smsadminui.pages.NavBar;
 import smsadminui.pages.UiKit;
 import smsadminui.utils.WebDriverFactory;
 
@@ -29,39 +30,44 @@ public class BrandingSteps {
         waitUpTo(10).until(ExpectedConditions.titleIs(title));
     }
 
-    @Then("the Jambopro logo should be shown")
-    public void theJamboproLogoShouldBeShown() {
+    @Then("the JamboPro logo should be shown")
+    public void theJamboProLogoShouldBeShown() {
         WebElement logo = waitUpTo(10).until(ExpectedConditions.visibilityOfElementLocated(
-                By.cssSelector("[role=img][aria-label='Jambopro']")));
-        Assert.assertTrue("Logo text: " + logo.getText(), logo.getText().replace("\n", "").contains("Jambopro"));
+                By.cssSelector("[role=img][aria-label='JamboPro']")));
+        Assert.assertTrue("Logo text: " + logo.getText(), logo.getText().replace("\n", "").contains("JamboPro"));
     }
 
     @Then("the login page should say {string}")
     public void theLoginPageShouldSay(String text) {
-        String headline = driver().findElement(By.cssSelector(".brand-panel .headline")).getText();
+        // The headline is two lines ("Send once." / "Know who got it."): compare it as one sentence.
+        String headline = driver().findElement(By.cssSelector(".panel .headline")).getText().replaceAll("\\s+", " ");
         Assert.assertEquals(text, headline);
     }
 
-    @Then("the sign-in button should be brand green with navy text")
-    public void theSignInButtonShouldBeBrandGreenWithNavyText() {
+    @Then("the sign-in button should be deep green with white text")
+    public void theSignInButtonShouldBeDeepGreenWithWhiteText() {
         WebElement button = driver().findElement(By.cssSelector("form.login-card button[type=submit]"));
-        Assert.assertEquals("rgb(0, 200, 83)", button.getCssValue("background-color").replace("rgba", "rgb").replace(", 1)", ")"));
-        Assert.assertEquals("rgb(11, 31, 59)", button.getCssValue("color").replace("rgba", "rgb").replace(", 1)", ")"));
+        Assert.assertEquals("rgb(14, 77, 60)", button.getCssValue("background-color").replace("rgba", "rgb").replace(", 1)", ")"));
+        Assert.assertEquals("rgb(255, 255, 255)", button.getCssValue("color").replace("rgba", "rgb").replace(", 1)", ")"));
     }
 
-    @Then("the page should use the Poppins typeface")
-    public void thePageShouldUseThePoppinsTypeface() {
+    @Then("the page should use the Inter typefaces")
+    public void thePageShouldUseTheInterTypefaces() {
+        // Text is Inter, headings are Inter Tight; both are bundled with the app, so nothing is fetched from a font host.
         Boolean loaded = (Boolean) ((JavascriptExecutor) driver()).executeAsyncScript(
                 "const done = arguments[arguments.length - 1];"
-                + "document.fonts.ready.then(() => done(document.fonts.check('600 16px Poppins')));");
-        String family = driver().findElement(By.tagName("body")).getCssValue("font-family");
-        Assert.assertTrue("body font-family " + family, family.startsWith("Poppins"));
-        Assert.assertTrue("Poppins did not load (is fonts.googleapis.com reachable?)", Boolean.TRUE.equals(loaded));
+                + "document.fonts.ready.then(() => done(document.fonts.check('600 16px \"Inter Variable\"')"
+                + " && document.fonts.check('800 16px \"Inter Tight Variable\"')));");
+        String body = driver().findElement(By.tagName("body")).getCssValue("font-family").replace("\"", "");
+        String heading = driver().findElement(By.cssSelector(".login-card h1")).getCssValue("font-family").replace("\"", "");
+        Assert.assertTrue("body font-family " + body, body.startsWith("Inter Variable"));
+        Assert.assertTrue("heading font-family " + heading, heading.startsWith("Inter Tight Variable"));
+        Assert.assertTrue("The Inter fonts did not load", Boolean.TRUE.equals(loaded));
     }
 
-    @When("I click the sidebar logo")
-    public void iClickTheSidebarLogo() {
-        waitUpTo(10).until(ExpectedConditions.elementToBeClickable(By.cssSelector(".sidebar a.brand"))).click();
+    @When("I click the top bar logo")
+    public void iClickTheTopBarLogo() {
+        new NavBar(driver()).clickLogo();
     }
 
     @Then("{string} should be served as {string}")

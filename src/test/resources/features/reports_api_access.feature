@@ -17,9 +17,9 @@ Feature: Reports and API access
   @C4152
   Scenario: The navigation has the campaign and billing areas
     Then the nav bar should show a "Campaigns" link
-    And the nav bar should show a "Broadcast lists" link
+    And the nav bar should show a "Contacts" link
     And the nav bar should show a "Templates" link
-    And the nav bar should show a "Billing" link
+    And the nav bar should show a "Wallet" link
     And the nav bar should not show a "Credits" link
     And the nav bar should not show a "Invoices" link
 

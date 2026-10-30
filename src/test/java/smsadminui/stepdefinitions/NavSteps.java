@@ -51,6 +51,11 @@ public class NavSteps {
         Assert.assertTrue(navBar().hasUsersLink());
     }
 
+    @Then("the nav bar should show a Team link")
+    public void theNavBarShouldShowATeamLink() {
+        Assert.assertTrue(navBar().hasTeamLink());
+    }
+
     @Then("the nav bar role badge should read {string}")
     public void theNavBarRoleBadgeShouldRead(String expected) {
         Assert.assertEquals(expected, navBar().roleBadgeText());

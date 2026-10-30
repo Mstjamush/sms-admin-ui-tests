@@ -13,6 +13,11 @@ Feature: Campaign builder - schedule, send, report, cancel
     Then the review step should have shown an estimated cost of "3 tokens"
     And the campaign report should show the status "Scheduled"
 
+  Scenario: A half-written campaign is still there after the page is reloaded
+    When I start a campaign to that list with message "Hello {{name}}, half written"
+    And I reload the new campaign page
+    Then the campaign message should read "Hello {{name}}, half written"
+
   @C4121
   Scenario: A scheduled campaign can be cancelled from its report
     When I start a campaign to that list with message "Hello {{name}}"

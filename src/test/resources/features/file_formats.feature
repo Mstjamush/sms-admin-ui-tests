@@ -8,19 +8,19 @@ Feature: Spreadsheet formats - upload any of seven, export in any of seven
 
   @C4104
   Scenario: An OpenDocument .ods file can be uploaded as a broadcast list
-    When I upload "personalised_list.ods" as a broadcast list through the Broadcast lists page
+    When I upload "personalised_list.ods" as a broadcast list through the Contacts page
     Then the import report should show 3 added, 0 duplicates skipped and 0 invalid
     And the new list should appear in the broadcast lists table with placeholders "name, amount"
 
   @C4105
   Scenario: An Apple Numbers file can be uploaded as a broadcast list
-    When I upload "personalised_list.numbers" as a broadcast list through the Broadcast lists page
+    When I upload "personalised_list.numbers" as a broadcast list through the Contacts page
     Then the import report should show 3 added, 0 duplicates skipped and 0 invalid
     And the new list should appear in the broadcast lists table with placeholders "name, amount"
 
   @C4106
   Scenario: A binary Excel .xlsb file can be uploaded as a broadcast list
-    When I upload "personalised_list.xlsb" as a broadcast list through the Broadcast lists page
+    When I upload "personalised_list.xlsb" as a broadcast list through the Contacts page
     Then the import report should show 3 added, 0 duplicates skipped and 0 invalid
 
   @C4107
@@ -41,14 +41,14 @@ Feature: Spreadsheet formats - upload any of seven, export in any of seven
 
   @C4160
   Scenario: A list's Export numbers menu offers all seven formats
-    When I upload "personalised_list.csv" as a broadcast list through the Broadcast lists page
+    When I upload "personalised_list.csv" as a broadcast list through the Contacts page
     And I open the new list
     And I open the "Export numbers" export menu
     Then the export menu should offer "csv, xlsx, xlsm, xlsb, xls, ods, numbers"
 
   @C4161
   Scenario: Exporting a list's numbers as .xlsx downloads the workbook
-    When I upload "personalised_list.csv" as a broadcast list through the Broadcast lists page
+    When I upload "personalised_list.csv" as a broadcast list through the Contacts page
     And I open the new list
     And I open the "Export numbers" export menu
     And I export as "xlsx"

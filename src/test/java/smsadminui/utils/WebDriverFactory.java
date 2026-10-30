@@ -23,6 +23,9 @@ public final class WebDriverFactory {
 
             ChromeOptions options = new ChromeOptions();
             options.addArguments("--window-size=1440,1000");
+            // The app shows French when the browser asks for it; the suite's texts are English whatever the machine's language.
+            options.addArguments("--lang=en-US");
+            options.setExperimentalOption("prefs", java.util.Map.of("intl.accept_languages", "en-US,en"));
             if (headless) {
                 options.addArguments("--headless=new");
             }

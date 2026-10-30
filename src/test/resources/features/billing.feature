@@ -1,14 +1,14 @@
 Feature: Billing - prepaid tokens, buying tokens, price bands, and postpaid usage and invoices
 
   Every client is prepaid (it buys tokens: 1 token sends 1 SMS page) or postpaid (it is invoiced). A Client Administrator has
-  Billing (and Invoices when postpaid); a Super Administrator has Clients, Payments, Invoices, Price bands and M-Pesa.
+  a Wallet (prepaid) or Billing (postpaid, with Invoices); a Super Administrator has Clients, Payments, Invoices, Price bands and M-Pesa.
   (Paying by M-Pesa calls Safaricom, so it isn't driven here.)
 
   @C4140
-  Scenario: A prepaid client administrator sees their token balance on the Billing page and in the top bar
+  Scenario: A prepaid client administrator sees their token balance on the Wallet page and in the top bar
     Given I am logged in as a newly provisioned client administrator
     When I open the "/billing" page
-    Then the page heading should read "Billing"
+    Then the page heading should read "Wallet"
     And the "Token balance" tile should read "1,000"
     And the "Price per token" tile should read "KES 1.00"
     And the balance chip should show "1,000 tokens"
