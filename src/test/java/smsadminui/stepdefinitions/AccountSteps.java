@@ -42,7 +42,7 @@ public class AccountSteps {
 
     @Then("the balance chip should show {string}")
     public void theBalanceChipShouldShow(String text) {
-        waitUpTo(10).until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector(".balance-chip"), text));
+        waitUpTo(10).until(ExpectedConditions.textToBePresentInElementLocated(By.cssSelector(".mainbar .balance"), text));
     }
 
     @Then("a success message should say {string}")
@@ -98,7 +98,8 @@ public class AccountSteps {
 
     @Then("the nav bar should show a {string} link")
     public void theNavBarShouldShowALink(String label) {
-        Assert.assertFalse(label, driver().findElements(By.xpath("//nav//a[normalize-space(.)='" + label + "']")).isEmpty());
+        // Some links (Wallet or Billing, Invoices) depend on the client's billing position, which arrives a moment after the page.
+        waitUpTo(10).until(ExpectedConditions.presenceOfElementLocated(By.xpath("//nav//a[normalize-space(.)='" + label + "']")));
     }
 
     @Then("the nav bar should not show a {string} link")

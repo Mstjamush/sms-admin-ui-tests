@@ -14,7 +14,7 @@ Feature: Dashboard navigation, role-based guards, and logout
     Then the nav bar should not show a Clients link
     And the nav bar should show a Senders link
     And the nav bar should show a Bulk Messages link
-    And the nav bar should show a Users link
+    And the nav bar should show a Team link
 
   @C4012
   Scenario: Logging out returns to the login page and ends the session
@@ -53,6 +53,13 @@ Feature: Dashboard navigation, role-based guards, and logout
     When I log in as the configured super admin
     Then I should be redirected to "/senders"
 
+  Scenario: A Client Administrator's dashboard greets them and shows what went out and how it arrived
+    Given I am logged in as a newly provisioned client administrator
+    Then the dashboard should greet me
+    And the dashboard should show the "SMS sent, last 14 days" figure
+    And the dashboard should show the "Delivery rate" figure
+    And the dashboard should show the "Scheduled" figure
+
   @C4016
   Scenario: A Super Administrator sees the Clients card on the dashboard
     Given I am on the login page
@@ -79,9 +86,10 @@ Feature: Dashboard navigation, role-based guards, and logout
     And the nav bar should not show a "Credits" link
 
   @C4187
-  Scenario: A prepaid Client Administrator has Billing but no Invoices
+  Scenario: A prepaid Client Administrator has a Wallet but no Invoices
     Given I am logged in as a newly provisioned client administrator
-    Then the nav bar should show a "Billing" link
+    Then the nav bar should show a "Wallet" link
+    And the nav bar should not show a "Billing" link
     And the nav bar should not show a "Invoices" link
     And the nav bar should not show a "Credits" link
     And the nav bar should not show a "Payments" link
@@ -95,8 +103,8 @@ Feature: Dashboard navigation, role-based guards, and logout
     Then I should be on the dashboard
 
   @C4189
-  Scenario: The old Credits address leads to Billing
+  Scenario: The old Credits address leads to the Wallet
     Given I am logged in as a newly provisioned client administrator
     When I open the "/credits" page
     Then the page URL should contain "/billing"
-    And the page heading should read "Billing"
+    And the page heading should read "Wallet"

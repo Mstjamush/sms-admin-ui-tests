@@ -40,4 +40,5 @@ Feature: Login
   @C4006
   Scenario: A Client Administrator logs in and sees their own client on the dashboard
     Given I am logged in as a newly provisioned client administrator
-    Then the dashboard subtitle should mention my client
+    Then the dashboard should greet me
+    And the top bar should name my client

@@ -36,7 +36,7 @@ public class MessagingSteps {
 
     // ------------------------------------------------------------ broadcast lists
 
-    @When("I upload {string} as a broadcast list through the Broadcast lists page")
+    @When("I upload {string} as a broadcast list through the Contacts page")
     public void iUploadAsABroadcastList(String file) {
         String name = "QA UI list " + RandomData.uniqueSuffix();
         ScenarioData.put("listName", name);
@@ -149,11 +149,29 @@ public class MessagingSteps {
         driver().get(smsadminui.config.Config.get("ui.base.url") + "/campaigns/new?list=" + ScenarioData.get("listId"));
         UiKit ui = ui();
         ui.heading();
+        // The campaign name is filled in from the list once the page has loaded it; only then can Contacts be left.
         waitUpTo(10).until(ExpectedConditions.attributeToBeNotEmpty(
                 driver().findElement(By.xpath("//label[contains(normalize-space(.), 'Campaign name')]/input")), "value"));
-        ui.typeInto("Campaign name", name);
         ui.clickButton("Continue");
+        ui.typeInto("Campaign name", name);
         ui.typeInto("Message", message);
+    }
+
+    @When("I reload the new campaign page")
+    public void iReloadTheNewCampaignPage() {
+        // The draft is written half a second after the last keystroke: wait until it holds the message before leaving.
+        String message = "half written";
+        waitUpTo(10).until(d -> Boolean.TRUE.equals(((JavascriptExecutor) d).executeScript(
+                "return Object.keys(localStorage).some(k => k.startsWith('jambopro:campaign-draft:')"
+                        + " && localStorage.getItem(k).includes(arguments[0]));", message)));
+        // No list in the address: the page opens with the draft, not with a list chosen for it.
+        driver().get(smsadminui.config.Config.get("ui.base.url") + "/campaigns/new");
+        ui().heading();
+    }
+
+    @Then("the campaign message should read {string}")
+    public void theCampaignMessageShouldRead(String message) {
+        waitUpTo(10).until(d -> message.equals(d.findElement(By.xpath("//label[contains(@class,'message')]/textarea")).getAttribute("value")));
     }
 
     @Then("the wizard preview should show {string}")
@@ -164,14 +182,14 @@ public class MessagingSteps {
     @When("I schedule it for tomorrow and confirm")
     public void iScheduleItForTomorrow() {
         UiKit ui = ui();
-        ui.clickButton("Continue");
-        driver().findElement(By.xpath("//label[contains(@class,'option')][.//strong[normalize-space(.)='Schedule for later']]")).click();
+        ui.clickButton("Review and send");
+        waitUpTo(10).until(ExpectedConditions.elementToBeClickable(
+                By.xpath("//label[contains(@class,'option')][.//strong[normalize-space(.)='Schedule for later']]"))).click();
         String tomorrow = LocalDateTime.now().plusDays(1).withSecond(0).withNano(0)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
         ((JavascriptExecutor) driver()).executeScript(
                 "const el = document.querySelector('input[type=datetime-local]'); el.value = arguments[0];"
                         + "el.dispatchEvent(new Event('input', { bubbles: true }));", tomorrow);
-        ui.clickButton("Continue");
         waitForEstimate();
         ui.clickButton("Schedule campaign");
     }
@@ -179,16 +197,19 @@ public class MessagingSteps {
     @When("I send it now and confirm")
     public void iSendItNow() {
         UiKit ui = ui();
-        ui.clickButton("Continue");
-        ui.clickButton("Continue");
+        ui.clickButton("Review and send");
         waitForEstimate();
         ui.clickButton("Send campaign now");
     }
 
+    /** The first line of the Cost panel beside the review: what the campaign costs ("3 tokens"). */
     private void waitForEstimate() {
-        String cost = waitUpTo(10).until(ExpectedConditions.visibilityOfElementLocated(
-                By.xpath("//h3[normalize-space(.)='Estimated cost']/following-sibling::div[contains(@class,'big')]"))).getText();
-        ScenarioData.put("estimate", cost);
+        By cost = By.xpath("//section[h2[normalize-space(.)='Cost']]//dl[contains(@class,'rows')]/div[1]/dd");
+        String text = waitUpTo(10).until(d -> {
+            java.util.List<org.openqa.selenium.WebElement> found = d.findElements(cost);
+            return !found.isEmpty() && found.get(0).isDisplayed() && !found.get(0).getText().isBlank() ? found.get(0).getText() : null;
+        });
+        ScenarioData.put("estimate", text);
     }
 
     @Then("the review step should have shown an estimated cost of {string}")
